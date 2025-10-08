@@ -93,47 +93,137 @@ body {
     visibility: visible;
 }
 
-/* ===== CRIADOR E EDITOR DE NOTAS ===== */
-.note-creator, .note-editor {
+/* ===== CRIADOR E EDITOR DE NOTAS - ESTILO GOOGLE KEEP CORRIGIDO ===== */
+.note-creator {
     background-color: var(--bg-secondary);
-    padding: 20px;
     border-radius: 10px;
     margin-bottom: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 1px solid transparent;
+    position: relative;
 }
 
-.note-editor {
-    border: 2px solid var(--accent-color);
+/* Estado compacto (padrão) */
+.note-creator.compact {
+    padding: 12px 15px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+}
+
+.note-creator.compact::before {
+    content: "Escreva uma nota...";
+    color: #888;
+    font-style: italic;
+}
+
+.note-creator.compact .title-input,
+.note-creator.compact .editable-content,
+.note-creator.compact .formatting-container,
+.note-creator.compact .content-sections-container {
     display: none;
 }
 
-.note-editor h2 {
-    color: var(--accent-color);
-    margin-bottom: 15px;
+/* Estado expandido */
+.note-creator.expanded {
+    padding: 20px;
+    cursor: default;
+    border: 1px solid #444;
+    min-height: auto;
 }
 
-.title-input, .editable-content {
+.note-creator.expanded::before {
+    display: none;
+}
+
+/* Campos de entrada no estado expandido */
+.note-creator.expanded .title-input,
+.note-creator.expanded .editable-content,
+.note-creator.expanded .formatting-container,
+.note-creator.expanded .content-sections-container {
+    display: block;
+}
+
+/* Estilos específicos para o campo de título */
+.title-input {
     width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #444;
-    border-radius: 8px;
-    background-color: var(--card-bg);
+    background: transparent;
+    border: none;
     color: var(--text-primary);
     font-size: 16px;
+    font-weight: 600;
+    padding: 8px 0;
+    margin-bottom: 10px;
+    outline: none;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.title-input::placeholder {
+    color: #888;
+    font-weight: normal;
+}
+
+/* Estilos específicos para o campo de conteúdo */
 .editable-content {
-    min-height: 150px;
-    resize: vertical;
-    overflow-y: auto;
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 8px 0;
+    outline: none;
+    min-height: 120px;
+    resize: none;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.editable-content[placeholder]:empty:before {
-    content: attr(placeholder);
+.editable-content::placeholder {
     color: #888;
     font-style: italic;
+}
+
+/* Garantir que os campos sejam visíveis quando expandidos */
+.note-creator.expanded #noteText {
+    display: block;
+    min-height: 120px;
+    width: 100%;
+}
+
+.note-creator.expanded #noteTitle {
+    display: block;
+    width: 100%;
+}
+
+/* Remover estilos padrão de inputs */
+#noteTitle, #noteText {
+    border: none;
+    background: transparent;
+    resize: none;
+    font-family: inherit;
+}
+
+#noteTitle:focus, #noteText:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Ajustes para mobile */
+@media (max-width: 768px) {
+    .title-input {
+        font-size: 18px; /* Prevenir zoom no iOS */
+        padding: 10px 0;
+    }
+    
+    .editable-content {
+        font-size: 16px; /* Prevenir zoom no iOS */
+        min-height: 140px;
+    }
+    
+    .note-creator.expanded {
+        padding: 15px;
+    }
 }
 
 /* ===== BARRA DE FERRAMENTAS ===== */
@@ -184,6 +274,26 @@ body {
 
 .formatting-toolbar input[type="file"] {
     display: none;
+}
+
+/* Botão de upload de imagem */
+.formatting-toolbar .image-upload-button {
+    padding: 8px;
+    border: none;
+    border-radius: 20px;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.formatting-toolbar .image-upload-button:hover {
+    background-color: #555;
 }
 
 .formatting-container .editor-buttons {
@@ -814,110 +924,166 @@ body {
     }
 }
 
-/* ===== MELHORIAS MOBILE ===== */
-@media (max-width: 768px) {
-  body {
-    padding: 10px;
-    font-size: 14px;
-  }
-
-  .header {
-    margin-bottom: 20px;
-  }
-
-  .search-container {
-    flex-direction: column;
-    width: 100%;
-    gap: 8px;
-  }
-
-  .search-container input {
-    width: 100%;
-    font-size: 16px; /* Previne zoom no iOS */
-  }
-
-  .note-creator, .note-editor {
-    padding: 15px;
-    margin-bottom: 20px;
-  }
-
-  .notes-grid {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-
-  .note-card {
-    padding: 12px;
-  }
-
-  .formatting-container {
-    flex-direction: column;
-    gap: 10px;
-    padding: 12px;
-  }
-
-  .formatting-toolbar {
-    justify-content: center;
-  }
-
-  .content-sections-container {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-
-  /* Melhorar área de toque */
-  button, .action-button, .category-chip {
-    min-height: 44px;
-    min-width: 44px;
-  }
-
-  .action-button {
-    width: 44px;
-    height: 44px;
-  }
-
-  .action-button svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  /* Prevenir zoom em inputs */
-  input, textarea, .editable-content {
-    font-size: 16px !important;
-  }
-
-  /* Ajustes específicos para PWA */
-  .pwa-mode {
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-}
-
-/* Suporte para notch e áreas seguras */
-@supports(padding: max(0px)) {
-  body {
-    padding-left: max(10px, env(safe-area-inset-left));
-    padding-right: max(10px, env(safe-area-inset-right));
-    padding-top: max(10px, env(safe-area-inset-top));
-    padding-bottom: max(10px, env(safe-area-inset-bottom));
-  }
-}
-
-/* Melhorias de scroll no mobile */
-@media (max-width: 768px) {
-  .todo-section,
-  .note-links-section {
-    max-height: 200px;
-    -webkit-overflow-scrolling: touch; /* Scroll suave no iOS */
-  }
-}
-
 @keyframes slideOut {
     from { transform: translateX(0); opacity: 1; }
     to { transform: translateX(100%); opacity: 0; }
 }
 
-/* ===== RESPONSIVIDADE ===== */
+/* ===== LAYOUT MOBILE ===== */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .header {
+        margin-bottom: 15px;
+    }
+
+    .search-container {
+        flex-direction: row;
+        width: 100%;
+        gap: 8px;
+        flex-wrap: nowrap;
+        display: grid;
+        grid-template-columns: 1fr auto auto auto auto;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .search-container input {
+        flex: 1;
+        min-width: 120px;
+        font-size: 16px;
+        grid-column: 1 / 2;
+    }
+
+    .search-container button,
+    .filter-button,
+    .backup-button {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 10px;
+        flex-shrink: 0;
+    }
+
+    #searchButton {
+        grid-column: 2 / 3;
+    }
+
+    #categoriesFilterButton {
+        grid-column: 3 / 4;
+    }
+
+    .backup-buttons {
+        grid-column: 4 / 6;
+        display: flex;
+        gap: 8px;
+        margin-left: 0;
+        margin-top: 0;
+    }
+
+    .note-creator, .note-editor {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .notes-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .note-card {
+        padding: 12px;
+    }
+
+    .formatting-container {
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .formatting-toolbar {
+        justify-content: center;
+    }
+
+    .content-sections-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    /* Melhorar área de toque */
+    button, .action-button, .category-chip {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .action-button {
+        width: 44px;
+        height: 44px;
+    }
+
+    .action-button svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Prevenir zoom em inputs */
+    input, textarea, .editable-content {
+        font-size: 16px !important;
+    }
+
+    /* Ajustes específicos para PWA */
+    .pwa-mode {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    /* Melhorias de scroll no mobile */
+    .todo-section,
+    .note-links-section {
+        max-height: 200px;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Ajustes para telas muito pequenas */
+@media (max-width: 480px) {
+    .search-container {
+        grid-template-columns: 1fr auto auto;
+        gap: 6px;
+    }
+
+    .search-container input {
+        grid-column: 1 / 2;
+    }
+
+    #searchButton {
+        grid-column: 2 / 3;
+    }
+
+    #categoriesFilterButton {
+        grid-column: 3 / 4;
+    }
+
+    .backup-buttons {
+        grid-column: 1 / -1;
+        margin-top: 8px;
+        justify-content: center;
+    }
+}
+
+/* Suporte para notch e áreas seguras */
+@supports(padding: max(0px)) {
+    body {
+        padding-left: max(10px, env(safe-area-inset-left));
+        padding-right: max(10px, env(safe-area-inset-right));
+        padding-top: max(10px, env(safe-area-inset-top));
+        padding-bottom: max(10px, env(safe-area-inset-bottom));
+    }
+}
+
+/* ===== RESPONSIVIDADE GERAL ===== */
 @media (max-width: 968px) {
     .content-sections-container {
         grid-template-columns: 1fr;
@@ -999,3 +1165,4 @@ body {
         margin: -15px -15px 10px -15px;
     }
 }
+

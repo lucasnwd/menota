@@ -1,7 +1,13 @@
 // script.js
 document.addEventListener('DOMContentLoaded', function() {
+    // ===== VARIÁVEIS GLOBAIS =====
+    let notes = JSON.parse(localStorage.getItem('menota-notes')) || [];
+    let currentFilterCategory = null;
+    let currentlyEditingId = null;
+
     // ===== ELEMENTOS DO DOM =====
     // Criador de Notas
+    const noteCreator = document.getElementById('noteCreator');
     const saveButton = document.getElementById('saveNote');
     const noteTitleInput = document.getElementById('noteTitle');
     const noteTextInput = document.getElementById('noteText');
@@ -46,21 +52,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const imageUpload = document.getElementById('imageUpload');
     const audioUpload = document.getElementById('audioUpload');
 
-    // ===== VARIÁVEIS GLOBAIS =====
-    let notes = JSON.parse(localStorage.getItem('menota-notes')) || [];
-    let currentFilterCategory = null;
-    let currentlyEditingId = null;
-
     // ===== INICIALIZAÇÃO =====
     init();
 
     function init() {
+        console.log('Inicializando MeNota...');
         renderNotes();
         updateCategoriesFilter();
         setupEventListeners();
+        setupGoogleKeepBehavior();
         
         if (notes.length === 0) {
-            showNotification('Bem-vindo ao MeNota! Comece criando sua primeira nota.');
+            showNotification('Bem-vindo ao MeNota! Clique em "Escreva uma nota..." para começar.');
         }
     }
 
@@ -102,25 +105,98 @@ document.addEventListener('DOMContentLoaded', function() {
         addTodoButton.addEventListener('click', () => addTodoItem(todoList));
         addTodoButtonEdit.addEventListener('click', () => addTodoItem(editTodoList));
 
-        // Teclas de Atalho
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && categoriesModal.style.display === 'block') {
-                closeCategoriesModal();
-            }
-        });
-
         // Upload de Arquivos
         imageUpload.addEventListener('change', handleImageUpload);
         audioUpload.addEventListener('change', handleAudioUpload);
+
+        // Teclas de Atalho
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (categoriesModal.style.display === 'block') {
+                    closeCategoriesModal();
+                } else if (noteCreator.classList.contains('expanded')) {
+                    checkAndCollapse();
+                }
+            }
+        });
+    }
+
+    // ===== COMPORTAMENTO GOOGLE KEEP =====
+    function setupGoogleKeepBehavior() {
+        console.log('Configurando comportamento Google Keep...');
+        
+        // Expande ao clicar no criador compacto
+        noteCreator.addEventListener('click', function(e) {
+            console.log('Click no note-creator, estado:', noteCreator.classList.contains('compact') ? 'compact' : 'expanded');
+            
+            if (noteCreator.classList.contains('compact')) {
+                expandNoteCreator();
+                e.stopPropagation();
+            }
+        });
+        
+        // Impede que clicks nos elementos internos fechem o criador
+        noteTextInput.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        
+        noteTitleInput.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        
+        // Fecha ao clicar fora
+        document.addEventListener('click', function(e) {
+            if (noteCreator.classList.contains('expanded') && !noteCreator.contains(e.target)) {
+                console.log('Click fora do note-creator expandido');
+                checkAndCollapse();
+            }
+        });
+    }
+
+    function expandNoteCreator() {
+        console.log('Expandindo note creator...');
+        
+        noteCreator.classList.remove('compact');
+        noteCreator.classList.add('expanded');
+        
+        // Foca no campo de texto
+        setTimeout(() => {
+            noteTextInput.focus();
+            console.log('Foco aplicado no campo de texto');
+        }, 100);
+    }
+
+    function checkAndCollapse() {
+        const hasContent = noteTitleInput.value.trim() || 
+                          noteTextInput.textContent.trim() || 
+                          getTodoData(todoList).length > 0;
+        
+        console.log('Verificando se pode colapsar. Tem conteúdo?', hasContent);
+        
+        if (!hasContent) {
+            collapseNoteCreator();
+        }
+    }
+
+    function collapseNoteCreator() {
+        console.log('Colapsando note creator...');
+        
+        noteCreator.classList.remove('expanded');
+        noteCreator.classList.add('compact');
+        clearInputs();
     }
 
     // ===== SISTEMA DE GERENCIAMENTO DE NOTAS =====
     function saveNote() {
+        console.log('Salvando nota...');
+        
         const title = noteTitleInput.value.trim();
         const text = noteTextInput.innerHTML.trim();
         const textContent = noteTextInput.textContent.trim();
         const color = noteColorInput.value;
         const todos = getTodoData(todoList);
+
+        console.log('Dados da nota:', { title, textContent, todos: todos.length });
 
         if (title && (textContent || todos.length > 0)) {
             const newNote = {
@@ -138,6 +214,8 @@ document.addEventListener('DOMContentLoaded', function() {
             updateCategoriesFilter();
             clearInputs();
             showNotification('Nota criada com sucesso!');
+            
+            collapseNoteCreator();
         } else {
             alert('Por favor, preencha pelo menos o título e algum conteúdo ou tarefa.');
         }
@@ -191,106 +269,129 @@ document.addEventListener('DOMContentLoaded', function() {
         showNotification('Nota excluída com sucesso!');
     }
 
-    // ===== SISTEMA DE RENDERIZAÇÃO =====
-    function renderNotes(notesToRender = notes) {
-    notesGrid.innerHTML = '';
+    function openEditor(noteId) {
+        const note = notes.find(n => n.id === noteId);
+        if (!note) return;
 
-    if (notesToRender.length === 0) {
-        notesGrid.innerHTML = '<p class="no-notes">Nenhuma nota encontrada.</p>';
-        return;
+        currentlyEditingId = noteId;
+        
+        // Preenche os campos do editor
+        editNoteTitle.value = note.title;
+        editNoteText.innerHTML = note.text;
+        editNoteColor.value = note.color || '#2d5a2d';
+        
+        // Carrega as todos
+        loadTodoData(editTodoList, note.todos || []);
+        
+        // Processa e exibe links
+        displayLinksInEditor(note.text, note.todos);
+        
+        // Mostra o editor e esconde o criador
+        noteCreator.style.display = 'none';
+        noteEditor.style.display = 'block';
+        
+        // Scroll para o topo
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    notesToRender.forEach(note => {
-        const noteCard = document.createElement('div');
-        
-        // Extrai a primeira imagem para thumbnail
-        const firstImage = extractFirstImageFromNote(note.text);
-        const hasImage = firstImage !== null;
+    function cancelEdit() {
+        currentlyEditingId = null;
+        noteEditor.style.display = 'none';
+        noteCreator.style.display = 'block';
+        clearEditorInputs();
+    }
 
-        // Calcula o "tamanho" da nota baseado no conteúdo
-        const todos = note.todos || [];
-        const hasTodos = todos.length > 0;
-        const textLength = note.text.replace(/<[^>]*>/g, '').length;
+    // ===== SISTEMA DE RENDERIZAÇÃO =====
+    function renderNotes(notesToRender = notes) {
+        console.log('Renderizando notas:', notesToRender.length);
         
-        // Determina a classe de tamanho
-        let sizeClass = 'small';
-        if (hasImage || hasTodos) {
-            sizeClass = 'medium';
-        }
-        if ((hasImage && hasTodos) || textLength > 500) {
-            sizeClass = 'large';
+        notesGrid.innerHTML = '';
+
+        if (notesToRender.length === 0) {
+            notesGrid.innerHTML = '<p class="no-notes">Nenhuma nota encontrada. Crie sua primeira nota!</p>';
+            return;
         }
 
-        noteCard.className = `note-card ${sizeClass}`;
-        noteCard.style.borderLeftColor = note.color;
-
-        const categoryMatches = note.text.match(/#([a-zA-Z0-9\u00C0-\u00FF\u00D1\u00F1_-]+)/g) || [];
-        const categories = [...new Set(categoryMatches)];
-        const previewText = note.text.replace(/<[^>]*>/g, '').substring(0, hasImage ? 80 : 120) + '...';
-
-        // Calcula progresso das tarefas
-        const completedTodos = todos.filter(todo => todo.completed).length;
-        const totalTodos = todos.length;
-        const hasTodosContent = totalTodos > 0;
-
-        noteCard.innerHTML = `
-            ${hasImage ? `
-                <div class="note-thumbnail-container">
-                    <img class="note-thumbnail" src="${firstImage}" alt="Thumbnail da nota" onerror="this.parentElement.remove()">
-                </div>
-            ` : ''}
+        notesToRender.forEach(note => {
+            const noteCard = document.createElement('div');
             
-            <div class="note-content">
-                <h3>${note.title}</h3>
-                <div class="note-preview">${previewText}</div>
-                
-                ${hasTodosContent ? `
-                    <div class="note-todo-indicator">
-                        <span>✅ ${completedTodos}/${totalTodos}</span>
-                        <span class="todo-progress">tarefas</span>
+            // Extrai a primeira imagem para thumbnail
+            const firstImage = extractFirstImageFromNote(note.text);
+            const hasImage = firstImage !== null;
+
+            noteCard.className = `note-card`;
+            noteCard.style.borderLeftColor = note.color;
+
+            const categoryMatches = note.text.match(/#([a-zA-Z0-9\u00C0-\u00FF\u00D1\u00F1_-]+)/g) || [];
+            const categories = [...new Set(categoryMatches)];
+            const previewText = note.text.replace(/<[^>]*>/g, '').substring(0, 120) + '...';
+
+            // Calcula progresso das tarefas
+            const todos = note.todos || [];
+            const completedTodos = todos.filter(todo => todo.completed).length;
+            const totalTodos = todos.length;
+            const hasTodosContent = totalTodos > 0;
+
+            noteCard.innerHTML = `
+                ${hasImage ? `
+                    <div class="note-thumbnail-container">
+                        <img class="note-thumbnail" src="${firstImage}" alt="Thumbnail da nota" onerror="this.parentElement.remove()">
                     </div>
                 ` : ''}
                 
-                ${categories.length > 0 ? `<div class="note-category">${categories.join(', ')}</div>` : ''}
-                
-                <div class="note-actions">
-                    <button class="action-button edit-button" data-id="${note.id}" title="Editar nota">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                        </svg>
-                    </button>
-                    <button class="action-button delete-button-small" data-id="${note.id}" title="Excluir nota">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                        </svg>
-                    </button>
+                <div class="note-content">
+                    <h3>${note.title}</h3>
+                    <div class="note-preview">${previewText}</div>
+                    
+                    ${hasTodosContent ? `
+                        <div class="note-todo-indicator">
+                            <span>✅ ${completedTodos}/${totalTodos}</span>
+                            <span class="todo-progress">tarefas</span>
+                        </div>
+                    ` : ''}
+                    
+                    ${categories.length > 0 ? `<div class="note-category">${categories.join(', ')}</div>` : ''}
+                    
+                    <div class="note-actions">
+                        <button class="action-button edit-button" data-id="${note.id}" title="Editar nota">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                            </svg>
+                        </button>
+                        <button class="action-button delete-button-small" data-id="${note.id}" title="Excluir nota">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
-            </div>
-        `;
+            `;
 
-        // Event Listeners (mantém igual)
-        const editBtn = noteCard.querySelector('.edit-button');
-        const deleteBtn = noteCard.querySelector('.delete-button-small');
+            // Event Listeners
+            const editBtn = noteCard.querySelector('.edit-button');
+            const deleteBtn = noteCard.querySelector('.delete-button-small');
 
-        editBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            openEditor(note.id);
+            editBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openEditor(note.id);
+            });
+
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (confirm('Tem certeza que deseja excluir esta nota?')) {
+                    deleteNoteById(note.id);
+                }
+            });
+
+            noteCard.addEventListener('click', () => {
+                openEditor(note.id);
+            });
+
+            notesGrid.appendChild(noteCard);
         });
-
-        deleteBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (confirm('Tem certeza que deseja excluir esta nota?')) {
-                deleteNoteById(note.id);
-            }
-        });
-
-        noteCard.addEventListener('click', () => {
-            openEditor(note.id);
-        });
-
-        notesGrid.appendChild(noteCard);
-    });
-}
+        
+        console.log('Notas renderizadas com sucesso');
+    }
 
     // ===== SISTEMA DE TODO LIST =====
     function addTodoItem(container) {
@@ -431,52 +532,60 @@ document.addEventListener('DOMContentLoaded', function() {
         const hasLinks = links.length > 0;
         
         const isEditing = noteEditor.style.display !== 'none';
-        const contentContainer = isEditing ? 
-            document.querySelector('#noteEditor .content-sections-container') : 
-            document.querySelector('.note-creator .content-sections-container');
-        
         const bottomContainer = isEditing ? 
             document.getElementById('editBottomSections') : 
             document.getElementById('bottomSections');
         
         // Limpa o container
-        bottomContainer.innerHTML = '';
+        if (bottomContainer) {
+            bottomContainer.innerHTML = '';
+        }
         
+        const contentContainer = isEditing ? 
+            document.querySelector('#noteEditor .content-sections-container') : 
+            document.querySelector('.note-creator .content-sections-container');
+        
+        if (!contentContainer) return;
+        
+        // Configura o layout
         if (!hasLinks) {
-            // Se não há links, mostra apenas a todo list ocupando toda a largura
             contentContainer.className = 'content-sections-container single-section';
             return;
         }
         
-        // Configura o layout baseado na presença de todos
         if (hasTodos) {
             contentContainer.className = 'content-sections-container';
         } else {
             contentContainer.className = 'content-sections-container single-section';
-            bottomContainer.className = 'bottom-sections-container single-section';
+            if (bottomContainer) {
+                bottomContainer.className = 'bottom-sections-container single-section';
+            }
         }
         
-        // Adiciona a seção de links
-        const linksSection = document.createElement('div');
-        linksSection.id = isEditing ? 'editNoteLinksSection' : 'noteLinksSection';
-        linksSection.className = 'note-links-section compact';
-        
-        const linksTitle = document.createElement('h4');
-        linksTitle.textContent = `Links (${links.length})`;
-        linksTitle.className = 'links-title';
-        
-        const linksList = document.createElement('div');
-        linksList.className = 'links-list';
-        
-        links.forEach(link => {
-            if (isValidUrl(link)) {
-                createLinkItem(link, linksList);
-            }
-        });
-        
-        linksSection.appendChild(linksTitle);
-        linksSection.appendChild(linksList);
-        bottomContainer.appendChild(linksSection);
+        // Adiciona a seção de links se houver links
+        if (hasLinks && bottomContainer) {
+            const linksSection = document.createElement('div');
+            linksSection.id = isEditing ? 'editNoteLinksSection' : 'noteLinksSection';
+            linksSection.className = 'note-links-section compact';
+            
+            const linksTitle = document.createElement('h4');
+            linksTitle.textContent = `Links (${links.length})`;
+            linksTitle.className = 'links-title';
+            
+            const linksList = document.createElement('div');
+            linksList.className = 'links-list';
+            
+            // Limita para mostrar apenas os primeiros 5 links
+            links.slice(0, 5).forEach(link => {
+                if (isValidUrl(link)) {
+                    createLinkItem(link, linksList);
+                }
+            });
+            
+            linksSection.appendChild(linksTitle);
+            linksSection.appendChild(linksList);
+            bottomContainer.appendChild(linksSection);
+        }
     }
 
     async function createLinkItem(link, container) {
@@ -925,59 +1034,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// ===== SISTEMA DE THUMBNAIL DE IMAGENS =====
-function extractFirstImageFromNote(noteText) {
-    // Procura por tags img com src
-    const imgRegex = /<img[^>]+src="([^">]+)"/g;
-    const match = imgRegex.exec(noteText);
-    
-    if (match && match[1]) {
-        return match[1];
-    }
-    
-    // Procura por imagens base64
-    const base64Regex = /<img[^>]+src="data:image\/[^;]+;base64,([^">]+)"/g;
-    const base64Match = base64Regex.exec(noteText);
-    
-    if (base64Match && base64Match[1]) {
-        return base64Match[0].match(/src="([^"]+)"/)[1];
-    }
-    
-    return null;
-}
-
-function createNoteThumbnail(imageSrc) {
-    const thumbnailContainer = document.createElement('div');
-    thumbnailContainer.className = 'note-thumbnail-container';
-    
-    const img = document.createElement('img');
-    img.className = 'note-thumbnail';
-    img.src = imageSrc;
-    img.alt = 'Thumbnail da nota';
-    img.onerror = function() {
-        // Se a imagem não carregar, remove o thumbnail
-        thumbnailContainer.remove();
-    };
-    
-    thumbnailContainer.appendChild(img);
-    return thumbnailContainer;
-}
-
-// ===== SISTEMA AVANÇADO DE THUMBNAIL =====
+// ===== FUNÇÕES GLOBAIS =====
 function extractFirstImageFromNote(noteText) {
     try {
-        // Cria um elemento temporário para parse do HTML
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = noteText;
         
-        // Procura pela primeira imagem
         const firstImg = tempDiv.querySelector('img');
         
         if (firstImg && firstImg.src) {
-            // Verifica se a imagem é válida
             const src = firstImg.src;
-            
-            // Se for imagem externa, retorna normalmente
             if (src.startsWith('http') || src.startsWith('data:')) {
                 return src;
             }
@@ -990,38 +1056,7 @@ function extractFirstImageFromNote(noteText) {
     }
 }
 
-function createNoteThumbnailWithFallback(imageSrc, noteId) {
-    const thumbnailContainer = document.createElement('div');
-    thumbnailContainer.className = 'note-thumbnail-container';
-    thumbnailContainer.setAttribute('data-note-id', noteId);
-    
-    const img = document.createElement('img');
-    img.className = 'note-thumbnail';
-    img.src = imageSrc;
-    img.alt = 'Thumbnail da nota';
-    img.loading = 'lazy'; // Otimização de carregamento
-    
-    img.onload = function() {
-        thumbnailContainer.classList.add('loaded');
-    };
-    
-    img.onerror = function() {
-        // Fallback: mostra um placeholder ou remove o thumbnail
-        thumbnailContainer.classList.add('error');
-        thumbnailContainer.innerHTML = `
-            <div class="thumbnail-placeholder">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
-                </svg>
-            </div>
-        `;
-    };
-    
-    thumbnailContainer.appendChild(img);
-    return thumbnailContainer;
-}
-
-// ===== PWA - REGISTRO DO SERVICE WORKER =====
+// ===== PWA =====
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
     navigator.serviceWorker.register('/sw.js')
@@ -1034,13 +1069,11 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Detectar se está rodando como PWA
 function isRunningInPWA() {
   return window.matchMedia('(display-mode: standalone)').matches || 
          window.navigator.standalone === true;
 }
 
-// Inicializar features mobile
 if (isRunningInPWA()) {
   document.documentElement.classList.add('pwa-mode');
 }

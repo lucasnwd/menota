@@ -303,95 +303,221 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ===== SISTEMA DE RENDERIZAÇÃO =====
     function renderNotes(notesToRender = notes) {
-        console.log('Renderizando notas:', notesToRender.length);
-        
-        notesGrid.innerHTML = '';
+    const notesGrid = document.getElementById('notesGrid');
+    notesGrid.innerHTML = '';
 
-        if (notesToRender.length === 0) {
-            notesGrid.innerHTML = '<p class="no-notes">Nenhuma nota encontrada. Crie sua primeira nota!</p>';
+    notesToRender.forEach(note => {
+        const noteCard = document.createElement('div');
+        noteCard.className = 'note-card';
+        noteCard.setAttribute('data-note-id', note.id);
+        
+        let noteContent = `
+            <div class="note-content">
+        `;
+        
+        // Adicionar thumbnail se existir
+        if (note.image) {
+    noteContent += `
+        <div class="note-thumbnail-container">
+            <img src="${note.image}" class="note-thumbnail" alt="Imagem da nota" 
+                 onclick="viewNoteImage('${note.id}')" style="cursor: pointer;">
+            <button class="remove-image-button-small" onclick="removeNoteImage('${note.id}', event)">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </button>
+        </div>
+    `;
+}
+        
+        noteContent += `
+                <h3>${note.title || 'Sem título'}</h3>
+                <div class="note-preview">${note.content || ''}</div>
+            </div>
+            <div class="note-actions">
+                <!-- BOTÃO NOVO: Adicionar/alterar imagem -->
+                <button class="action-button image-button" onclick="addImageToExistingNote('${note.id}')" title="Adicionar imagem">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                    </svg>
+                </button>
+                
+                <button class="action-button edit-button" onclick="editNote('${note.id}')" title="Editar nota">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                    </svg>
+                </button>
+                
+                <button class="action-button delete-button-small" onclick="deleteNote('${note.id}')" title="Excluir nota">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                    </svg>
+                </button>
+            </div>
+        `;
+        
+        noteCard.innerHTML = noteContent;
+        notesGrid.appendChild(noteCard);
+    });
+}
+
+// ===== FUNÇÕES PARA ADICIONAR IMAGEM EM NOTAS EXISTENTES =====
+
+// Adicionar imagem a uma nota existente
+function addImageToExistingNote(noteId) {
+    // Criar input file dinamicamente
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.style.display = 'none';
+    
+    fileInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        // Verificar se é uma imagem
+        if (!file.type.startsWith('image/')) {
+            alert('Por favor, selecione apenas arquivos de imagem.');
             return;
         }
+        
+        // Verificar tamanho do arquivo (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('A imagem deve ter no máximo 5MB.');
+            return;
+        }
+        
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            const imageDataUrl = e.target.result;
+            updateNoteImage(noteId, imageDataUrl);
+        };
+        
+        reader.onerror = function() {
+            alert('Erro ao carregar a imagem. Tente novamente.');
+        };
+        
+        reader.readAsDataURL(file);
+        
+        // Limpar o input
+        document.body.removeChild(fileInput);
+    });
+    
+    // Adicionar ao DOM e clicar
+    document.body.appendChild(fileInput);
+    fileInput.click();
+}
 
-        notesToRender.forEach(note => {
-            const noteCard = document.createElement('div');
+// Atualizar imagem da nota
+function updateNoteImage(noteId, imageDataUrl) {
+    const noteIndex = notes.findIndex(note => note.id === noteId);
+    
+    if (noteIndex !== -1) {
+        // Atualizar a nota
+        notes[noteIndex].image = imageDataUrl;
+        notes[noteIndex].updatedAt = new Date();
+        
+        // Salvar no localStorage
+        localStorage.setItem('notes', JSON.stringify(notes));
+        
+        // Re-renderizar as notas
+        renderNotes();
+        
+        console.log('Imagem adicionada à nota:', noteId);
+    }
+}
+
+// Remover imagem de uma nota
+function removeNoteImage(noteId, event) {
+    if (event) {
+        event.stopPropagation(); // Prevenir clique no card
+    }
+    
+    if (confirm('Remover imagem desta nota?')) {
+        const noteIndex = notes.findIndex(note => note.id === noteId);
+        
+        if (noteIndex !== -1) {
+            // Remover imagem da nota
+            notes[noteIndex].image = null;
+            notes[noteIndex].updatedAt = new Date();
             
-            // Extrai a primeira imagem para thumbnail
-            const firstImage = extractFirstImageFromNote(note.text);
-            const hasImage = firstImage !== null;
+            // Salvar no localStorage
+            localStorage.setItem('notes', JSON.stringify(notes));
+            
+            // Re-renderizar as notas
+            renderNotes();
+            
+            console.log('Imagem removida da nota:', noteId);
+        }
+    }
+}
 
-            noteCard.className = `note-card`;
-            noteCard.style.borderLeftColor = note.color;
-
-            const categoryMatches = note.text.match(/#([a-zA-Z0-9\u00C0-\u00FF\u00D1\u00F1_-]+)/g) || [];
-            const categories = [...new Set(categoryMatches)];
-            const previewText = note.text.replace(/<[^>]*>/g, '').substring(0, 120) + '...';
-
-            // Calcula progresso das tarefas
-            const todos = note.todos || [];
-            const completedTodos = todos.filter(todo => todo.completed).length;
-            const totalTodos = todos.length;
-            const hasTodosContent = totalTodos > 0;
-
-            noteCard.innerHTML = `
-                ${hasImage ? `
-                    <div class="note-thumbnail-container">
-                        <img class="note-thumbnail" src="${firstImage}" alt="Thumbnail da nota" onerror="this.parentElement.remove()">
-                    </div>
-                ` : ''}
-                
-                <div class="note-content">
-                    <h3>${note.title}</h3>
-                    <div class="note-preview">${previewText}</div>
-                    
-                    ${hasTodosContent ? `
-                        <div class="note-todo-indicator">
-                            <span>✅ ${completedTodos}/${totalTodos}</span>
-                            <span class="todo-progress">tarefas</span>
-                        </div>
-                    ` : ''}
-                    
-                    ${categories.length > 0 ? `<div class="note-category">${categories.join(', ')}</div>` : ''}
-                    
-                    <div class="note-actions">
-                        <button class="action-button edit-button" data-id="${note.id}" title="Editar nota">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                            </svg>
-                        </button>
-                        <button class="action-button delete-button-small" data-id="${note.id}" title="Excluir nota">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            `;
-
-            // Event Listeners
-            const editBtn = noteCard.querySelector('.edit-button');
-            const deleteBtn = noteCard.querySelector('.delete-button-small');
-
-            editBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                openEditor(note.id);
-            });
-
-            deleteBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (confirm('Tem certeza que deseja excluir esta nota?')) {
-                    deleteNoteById(note.id);
-                }
-            });
-
-            noteCard.addEventListener('click', () => {
-                openEditor(note.id);
-            });
-
-            notesGrid.appendChild(noteCard);
+// Função para visualizar imagem em tela cheia
+function viewNoteImage(noteId) {
+    const note = notes.find(note => note.id === noteId);
+    
+    if (note && note.image) {
+        // Criar modal para visualização
+        const modal = document.createElement('div');
+        modal.className = 'image-modal';
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            cursor: zoom-out;
+        `;
+        
+        const img = document.createElement('img');
+        img.src = note.image;
+        img.style.cssText = `
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 8px;
+        `;
+        
+        const closeButton = document.createElement('button');
+        closeButton.innerHTML = '×';
+        closeButton.style.cssText = `
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        `;
+        
+        closeButton.addEventListener('click', function() {
+            document.body.removeChild(modal);
         });
         
-        console.log('Notas renderizadas com sucesso');
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                document.body.removeChild(modal);
+            }
+        });
+        
+        modal.appendChild(img);
+        modal.appendChild(closeButton);
+        document.body.appendChild(modal);
     }
+}
 
     // ===== SISTEMA DE TODO LIST =====
     function addTodoItem(container) {

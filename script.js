@@ -1077,3 +1077,17 @@ function isRunningInPWA() {
 if (isRunningInPWA()) {
   document.documentElement.classList.add('pwa-mode');
 }
+
+// script.js - Corrigir o registro do Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        // Use o caminho absoluto considerando o subdiretório
+        navigator.serviceWorker.register('/menota/sw.js')
+            .then(function(registration) {
+                console.log('ServiceWorker registrado com sucesso: ', registration.scope);
+            })
+            .catch(function(error) {
+                console.log('Falha no registro do ServiceWorker: ', error);
+            });
+    });
+}

@@ -36,7 +36,10 @@
      height="512"
      rx="100"
      fill="#2d5a2d"
-     id="rect1" />
+     id="rect1"
+     inkscape:export-filename="icon-192.png"
+     inkscape:export-xdpi="150"
+     inkscape:export-ydpi="150" />
   <g
      id="g11"
      transform="translate(-604.99609,-465.47558)">

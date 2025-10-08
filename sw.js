@@ -1,4 +1,5 @@
-const CACHE_NAME = 'menota-v1.2';
+const CACHE_NAME = 'menota-v2.0.1';
+const BASE_URL = '/menota/'; // 
 const urlsToCache = [
   './',
   './index.html',

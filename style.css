@@ -232,7 +232,7 @@ body {
     justify-content: space-between;
     align-items: center;
     gap: 15px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* Alterado para nowrap */
     padding: 15px;
     background-color: rgba(45, 90, 45, 0.1);
     border-radius: 8px;
@@ -243,20 +243,22 @@ body {
 
 .formatting-toolbar {
     display: flex;
-    gap: 10px;
+    gap: 8px; /* Reduzido ligeiramente */
     align-items: center;
     flex-wrap: wrap;
     flex: 1;
+    min-width: 0; /* Permite que encolha */
 }
 
 .formatting-toolbar button {
-    padding: 8px 12px;
+    padding: 8px 10px; /* Ajustado */
     border: none;
     border-radius: 20px;
     background-color: #444;
     color: white;
     cursor: pointer;
     transition: all 0.2s ease;
+    flex-shrink: 0; /* Não encolhe */
 }
 
 .formatting-toolbar button:hover {
@@ -264,12 +266,13 @@ body {
 }
 
 .formatting-toolbar input[type="color"] {
-    width: 40px;
-    height: 40px;
+    width: 36px; /* Reduzido ligeiramente */
+    height: 36px;
     border: none;
     border-radius: 50%;
     cursor: pointer;
     background: none;
+    flex-shrink: 0;
 }
 
 .formatting-toolbar input[type="file"] {
@@ -288,8 +291,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
 }
 
 .formatting-toolbar .image-upload-button:hover {
@@ -299,8 +303,63 @@ body {
 .formatting-container .editor-buttons {
     display: flex;
     gap: 10px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* Alterado para nowrap */
     margin: 0;
+    flex-shrink: 0; /* Não encolhe */
+    margin-left: auto; /* Empurra para a direita */
+}
+
+/* ===== BOTÕES DE AÇÃO CORRIGIDOS ===== */
+.save-button {
+    padding: 10px 20px; /* Ajustado */
+    border: none;
+    border-radius: 30px;
+    background-color: var(--accent-color);
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.save-button:hover {
+    background-color: var(--accent-hover);
+}
+
+.cancel-button {
+    padding: 10px 20px; /* Ajustado */
+    border: 1px solid #666;
+    border-radius: 30px;
+    background-color: transparent;
+    color: var(--text-primary);
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.cancel-button:hover {
+    background-color: #444;
+}
+
+.delete-button {
+    padding: 10px 20px; /* Ajustado */
+    border: none;
+    border-radius: 30px;
+    background-color: #d32f2f;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.delete-button:hover {
+    background-color: #b71c1c;
 }
 
 /* ===== BOTÕES ===== */
@@ -931,169 +990,73 @@ body {
 
 /* ===== LAYOUT MOBILE ===== */
 @media (max-width: 768px) {
-    body {
-        padding: 10px;
-        font-size: 14px;
-    }
-
-    .header {
-        margin-bottom: 15px;
-    }
-
-    .search-container {
-        flex-direction: row;
-        width: 100%;
-        gap: 8px;
-        flex-wrap: nowrap;
-        display: grid;
-        grid-template-columns: 1fr auto auto auto auto;
-        gap: 8px;
-        align-items: center;
-    }
-
-    .search-container input {
-        flex: 1;
-        min-width: 120px;
-        font-size: 16px;
-        grid-column: 1 / 2;
-    }
-
-    .search-container button,
-    .filter-button,
-    .backup-button {
-        min-width: 44px;
-        min-height: 44px;
-        padding: 10px;
-        flex-shrink: 0;
-    }
-
-    #searchButton {
-        grid-column: 2 / 3;
-    }
-
-    #categoriesFilterButton {
-        grid-column: 3 / 4;
-    }
-
-    .backup-buttons {
-        grid-column: 4 / 6;
-        display: flex;
-        gap: 8px;
-        margin-left: 0;
-        margin-top: 0;
-    }
-
-    .note-creator, .note-editor {
-        padding: 15px;
-        margin-bottom: 20px;
-    }
-
-    .notes-grid {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-
-    .note-card {
-        padding: 12px;
-    }
-
     .formatting-container {
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
         padding: 12px;
+        flex-wrap: wrap;
     }
-
+    
     .formatting-toolbar {
         justify-content: center;
+        width: 100%;
+        gap: 6px; /* Menor gap no mobile */
+        order: 1; /* Toolbar primeiro */
     }
-
-    .content-sections-container {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-
-    /* Melhorar área de toque */
-    button, .action-button, .category-chip {
-        min-height: 44px;
-        min-width: 44px;
-    }
-
-    .action-button {
-        width: 44px;
-        height: 44px;
-    }
-
-    .action-button svg {
-        width: 20px;
-        height: 20px;
-    }
-
-    /* Prevenir zoom em inputs */
-    input, textarea, .editable-content {
-        font-size: 16px !important;
-    }
-
-    /* Ajustes específicos para PWA */
-    .pwa-mode {
-        padding-top: env(safe-area-inset-top);
-        padding-bottom: env(safe-area-inset-bottom);
-    }
-
-    /* Melhorias de scroll no mobile */
-    .todo-section,
-    .note-links-section {
-        max-height: 200px;
-        -webkit-overflow-scrolling: touch;
-    }
-}
-
-/* Ajustes para telas muito pequenas */
-@media (max-width: 480px) {
-    .search-container {
-        grid-template-columns: 1fr auto auto;
-        gap: 6px;
-    }
-
-    .search-container input {
-        grid-column: 1 / 2;
-    }
-
-    #searchButton {
-        grid-column: 2 / 3;
-    }
-
-    #categoriesFilterButton {
-        grid-column: 3 / 4;
-    }
-
-    .backup-buttons {
-        grid-column: 1 / -1;
-        margin-top: 8px;
+    
+    .formatting-container .editor-buttons {
         justify-content: center;
+        width: 100%;
+        gap: 8px;
+        order: 2; /* Botões depois */
+        margin-left: 0; /* Remove margin-left no mobile */
+        padding-top: 8px; /* Espaço entre as linhas */
+        border-top: 1px solid rgba(255, 255, 255, 0.1); /* Linha separadora */
     }
-}
-
-/* Suporte para notch e áreas seguras */
-@supports(padding: max(0px)) {
-    body {
-        padding-left: max(10px, env(safe-area-inset-left));
-        padding-right: max(10px, env(safe-area-inset-right));
-        padding-top: max(10px, env(safe-area-inset-top));
-        padding-bottom: max(10px, env(safe-area-inset-bottom));
+    
+    .formatting-toolbar button,
+    .formatting-toolbar .image-upload-button,
+    .formatting-toolbar input[type="color"] {
+        padding: 10px;
+        min-width: 44px;
+        min-height: 44px;
+        flex-shrink: 0;
+    }
+    
+    .save-button,
+    .cancel-button,
+    .delete-button {
+        padding: 12px 16px;
+        font-size: 14px;
+        min-height: 44px;
+        flex: 1; /* Botões ocupam espaço igual */
+        max-width: 120px; /* Limita largura máxima */
+    }
+    
+    /* Layout específico para telas muito pequenas */
+    @media (max-width: 480px) {
+        .formatting-toolbar {
+            gap: 4px;
+        }
+        
+        .formatting-container .editor-buttons {
+            gap: 6px;
+        }
+        
+        .save-button,
+        .cancel-button,
+        .delete-button {
+            padding: 10px 12px;
+            font-size: 13px;
+            max-width: 110px;
+        }
     }
 }
 
 /* ===== RESPONSIVIDADE GERAL ===== */
 @media (max-width: 968px) {
-    .content-sections-container {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-    
     .formatting-container {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
+        flex-wrap: wrap;
     }
     
     .formatting-toolbar {
@@ -1101,68 +1064,33 @@ body {
     }
     
     .formatting-container .editor-buttons {
-        justify-content: center;
-    }
-}
-
-@media (max-width: 768px) {
-    .formatting-container {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .formatting-toolbar {
-        justify-content: center;
-    }
-    
-    .formatting-container .save-button,
-    .formatting-container .editor-buttons {
-        width: 100%;
-        justify-content: center;
-    }
-    
-    .header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .search-container {
-        width: 100%;
-        justify-content: space-between;
-    }
-    
-    .backup-buttons {
         margin-left: 0;
-        margin-top: 10px;
-    }
-    
-    .modal-content {
-        margin: 10% auto;
-        width: 95%;
-    }
-    
-    .content-sections-container {
-        grid-template-columns: 1fr;
-    }
-    
-    .link-content {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-    
-    .thumbnail-container {
+        justify-content: center;
         width: 100%;
-        height: 80px;
-    }
-    
-    .todo-actions {
-        opacity: 1;
-    }
-    
-    .note-thumbnail-container {
-        height: 100px;
-        margin: -15px -15px 10px -15px;
     }
 }
 
+/* Ajuste para telas médias */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .formatting-container {
+        gap: 12px;
+    }
+    
+    .formatting-toolbar {
+        gap: 6px;
+    }
+    
+    .save-button,
+    .cancel-button,
+    .delete-button {
+        padding: 10px 18px;
+        font-size: 13px;
+    }
+}
+
+/* Garantir que não quebre em telas muito grandes */
+@media (min-width: 1200px) {
+    .formatting-container {
+        flex-wrap: nowrap;
+    }
+}

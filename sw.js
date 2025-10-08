@@ -1,47 +1,62 @@
 const CACHE_NAME = 'menota-v2.0.1';
-const BASE_URL = '/menota/'; // 
+const BASE_URL = '/menota/';
+
 const urlsToCache = [
-  './',
-  './index.html',
-  './style.css',
-  './script.js',
-  './manifest.json',
-  './icon-192.png',
-  './icon-512.png'
+    BASE_URL,
+    BASE_URL + 'index.html',
+    BASE_URL + 'style.css',
+    BASE_URL + 'script.js',
+    BASE_URL + 'manifest.json',
+    // Adicione outros recursos se necessário
 ];
 
-// Instalação
-self.addEventListener('install', function(event) {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(function(cache) {
-        return cache.addAll(urlsToCache);
-      })
-  );
+self.addEventListener('install', (event) => {
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then((cache) => {
+                console.log('Cache aberto');
+                return cache.addAll(urlsToCache);
+            })
+    );
 });
 
-// Fetch
-self.addEventListener('fetch', function(event) {
-  event.respondWith(
-    caches.match(event.request)
-      .then(function(response) {
-        // Retorna do cache ou faz fetch
-        return response || fetch(event.request);
-      })
-  );
+self.addEventListener('fetch', (event) => {
+    event.respondWith(
+        caches.match(event.request)
+            .then((response) => {
+                if (response) {
+                    return response;
+                }
+
+                return fetch(event.request).then((response) => {
+                    if (!response || response.status !== 200 || response.type !== 'basic') {
+                        return response;
+                    }
+
+                    const responseToCache = response.clone();
+
+                    caches.open(CACHE_NAME)
+                        .then((cache) => {
+                            cache.put(event.request, responseToCache);
+                        });
+
+                    return response;
+                });
+            })
+    );
 });
 
-// Ativação
-self.addEventListener('activate', function(event) {
-  event.waitUntil(
-    caches.keys().then(function(cacheNames) {
-      return Promise.all(
-        cacheNames.map(function(cacheName) {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cacheName) => {
+                    if (cacheName !== CACHE_NAME) {
+                        console.log('Deletando cache antigo:', cacheName);
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
         })
-      );
-    })
-  );
+    );
 });

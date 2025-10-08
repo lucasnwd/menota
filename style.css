@@ -93,7 +93,7 @@ body {
     visibility: visible;
 }
 
-/* ===== CRIADOR E EDITOR DE NOTAS - ESTILO GOOGLE KEEP CORRIGIDO ===== */
+/* ===== CRIADOR E EDITOR DE NOTAS - CORRIGIDO ===== */
 .note-creator {
     background-color: var(--bg-secondary);
     border-radius: 10px;
@@ -104,7 +104,7 @@ body {
     position: relative;
 }
 
-/* Estado compacto (padrão) */
+/* Estado compacto */
 .note-creator.compact {
     padding: 12px 15px;
     min-height: 48px;
@@ -137,7 +137,6 @@ body {
     display: none;
 }
 
-/* Campos de entrada no estado expandido */
 .note-creator.expanded .title-input,
 .note-creator.expanded .editable-content,
 .note-creator.expanded .formatting-container,
@@ -145,7 +144,7 @@ body {
     display: block;
 }
 
-/* Estilos específicos para o campo de título */
+/* Campos de entrada */
 .title-input {
     width: 100%;
     background: transparent;
@@ -164,7 +163,6 @@ body {
     font-weight: normal;
 }
 
-/* Estilos específicos para o campo de conteúdo */
 .editable-content {
     width: 100%;
     background: transparent;
@@ -184,55 +182,13 @@ body {
     font-style: italic;
 }
 
-/* Garantir que os campos sejam visíveis quando expandidos */
-.note-creator.expanded #noteText {
-    display: block;
-    min-height: 120px;
-    width: 100%;
-}
-
-.note-creator.expanded #noteTitle {
-    display: block;
-    width: 100%;
-}
-
-/* Remover estilos padrão de inputs */
-#noteTitle, #noteText {
-    border: none;
-    background: transparent;
-    resize: none;
-    font-family: inherit;
-}
-
-#noteTitle:focus, #noteText:focus {
-    outline: none;
-    box-shadow: none;
-}
-
-/* Ajustes para mobile */
-@media (max-width: 768px) {
-    .title-input {
-        font-size: 18px; /* Prevenir zoom no iOS */
-        padding: 10px 0;
-    }
-    
-    .editable-content {
-        font-size: 16px; /* Prevenir zoom no iOS */
-        min-height: 140px;
-    }
-    
-    .note-creator.expanded {
-        padding: 15px;
-    }
-}
-
-/* ===== BARRA DE FERRAMENTAS ===== */
+/* ===== BARRA DE FERRAMENTAS - CORRIGIDA ===== */
 .formatting-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 15px;
-    flex-wrap: nowrap; /* Alterado para nowrap */
+    flex-wrap: nowrap;
     padding: 15px;
     background-color: rgba(45, 90, 45, 0.1);
     border-radius: 8px;
@@ -243,22 +199,22 @@ body {
 
 .formatting-toolbar {
     display: flex;
-    gap: 8px; /* Reduzido ligeiramente */
+    gap: 8px;
     align-items: center;
     flex-wrap: wrap;
     flex: 1;
-    min-width: 0; /* Permite que encolha */
+    min-width: 0;
 }
 
 .formatting-toolbar button {
-    padding: 8px 10px; /* Ajustado */
+    padding: 8px 10px;
     border: none;
     border-radius: 20px;
     background-color: #444;
     color: white;
     cursor: pointer;
     transition: all 0.2s ease;
-    flex-shrink: 0; /* Não encolhe */
+    flex-shrink: 0;
 }
 
 .formatting-toolbar button:hover {
@@ -266,7 +222,7 @@ body {
 }
 
 .formatting-toolbar input[type="color"] {
-    width: 36px; /* Reduzido ligeiramente */
+    width: 36px;
     height: 36px;
     border: none;
     border-radius: 50%;
@@ -288,92 +244,43 @@ body {
     color: white;
     cursor: pointer;
     transition: all 0.2s ease;
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: center;
     width: 36px;
     height: 36px;
     flex-shrink: 0;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .formatting-toolbar .image-upload-button:hover {
     background-color: #555;
+    transform: scale(1.05);
 }
 
 .formatting-container .editor-buttons {
     display: flex;
     gap: 10px;
-    flex-wrap: nowrap; /* Alterado para nowrap */
+    flex-wrap: nowrap;
     margin: 0;
-    flex-shrink: 0; /* Não encolhe */
-    margin-left: auto; /* Empurra para a direita */
-}
-
-/* ===== BOTÕES DE AÇÃO CORRIGIDOS ===== */
-.save-button {
-    padding: 10px 20px; /* Ajustado */
-    border: none;
-    border-radius: 30px;
-    background-color: var(--accent-color);
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    white-space: nowrap;
     flex-shrink: 0;
-}
-
-.save-button:hover {
-    background-color: var(--accent-hover);
-}
-
-.cancel-button {
-    padding: 10px 20px; /* Ajustado */
-    border: 1px solid #666;
-    border-radius: 30px;
-    background-color: transparent;
-    color: var(--text-primary);
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.cancel-button:hover {
-    background-color: #444;
-}
-
-.delete-button {
-    padding: 10px 20px; /* Ajustado */
-    border: none;
-    border-radius: 30px;
-    background-color: #d32f2f;
-    color: white;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.delete-button:hover {
-    background-color: #b71c1c;
+    margin-left: auto;
 }
 
 /* ===== BOTÕES ===== */
 .save-button {
-    padding: 12px 25px;
+    padding: 10px 20px;
     border: none;
     border-radius: 30px;
     background-color: var(--accent-color);
     color: white;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s ease;
     white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .save-button:hover {
@@ -381,14 +288,16 @@ body {
 }
 
 .cancel-button {
-    padding: 12px 25px;
+    padding: 10px 20px;
     border: 1px solid #666;
     border-radius: 30px;
     background-color: transparent;
     color: var(--text-primary);
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .cancel-button:hover {
@@ -396,18 +305,164 @@ body {
 }
 
 .delete-button {
-    padding: 12px 25px;
+    padding: 10px 20px;
     border: none;
     border-radius: 30px;
     background-color: #d32f2f;
     color: white;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .delete-button:hover {
     background-color: #b71c1c;
+}
+
+/* ===== BOTÕES DE AÇÃO NAS NOTAS ===== */
+.note-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.note-card:hover .note-actions {
+    opacity: 1;
+}
+
+.action-button {
+    padding: 6px;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.action-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.edit-button:hover {
+    background-color: rgba(45, 90, 45, 0.3);
+    color: var(--accent-color);
+}
+
+.delete-button-small:hover {
+    background-color: rgba(211, 47, 47, 0.3);
+    color: #d32f2f;
+}
+
+.image-button:hover {
+    background-color: rgba(33, 150, 243, 0.3);
+    color: #2196f3;
+}
+
+.action-button svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* ===== THUMBNAIL DAS NOTAS ===== */
+.note-thumbnail-container {
+    width: 100%;
+    height: 150px;
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+    margin: -20px -20px 15px -20px;
+    background-color: var(--card-bg);
+    border-bottom: 1px solid #444;
+    position: relative;
+    display: block !important;
+}
+
+.note-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    display: block;
+    cursor: pointer;
+}
+
+.note-thumbnail-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-hover) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+}
+
+.note-card:hover .note-thumbnail {
+    transform: scale(1.05);
+}
+
+.note-card:has(.note-thumbnail-container) {
+    padding-top: 0;
+    overflow: hidden;
+}
+
+.note-card:has(.note-thumbnail-container) h3 {
+    margin-top: 12px;
+    margin-bottom: 8px;
+    padding: 0 15px;
+}
+
+.note-card:has(.note-thumbnail-container) .note-content {
+    padding: 0 15px;
+}
+
+.note-card:has(.note-thumbnail-container) .note-actions {
+    padding: 0 15px 15px 15px;
+    margin-top: 10px;
+}
+
+/* ===== BOTÃO REMOVER IMAGEM ===== */
+.remove-image-button-small {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+}
+
+.note-thumbnail-container:hover .remove-image-button-small {
+    opacity: 1;
+}
+
+.remove-image-button-small:hover {
+    background: rgba(211, 47, 47, 0.8);
+    transform: scale(1.1);
+}
+
+.remove-image-button-small svg {
+    width: 14px;
+    height: 14px;
 }
 
 /* ===== SEÇÕES DE CONTEÚDO ===== */
@@ -692,122 +747,7 @@ body {
     background-color: var(--accent-color);
 }
 
-/* ===== BOTÃO DE IMAGEM NAS NOTAS DO GRID ===== */
-.note-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 10px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.note-card:hover .note-actions {
-    opacity: 1;
-}
-
-.action-button {
-    padding: 6px;
-    border: none;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: var(--text-primary);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-}
-
-.action-button:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    transform: scale(1.1);
-}
-
-.edit-button:hover {
-    background-color: rgba(45, 90, 45, 0.3);
-    color: var(--accent-color);
-}
-
-.delete-button-small:hover {
-    background-color: rgba(211, 47, 47, 0.3);
-    color: #d32f2f;
-}
-
-/* NOVO: Botão de adicionar imagem */
-.image-button:hover {
-    background-color: rgba(33, 150, 243, 0.3);
-    color: #2196f3;
-}
-
-/* Ícones SVG */
-.action-button svg {
-    width: 16px;
-    height: 16px;
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-    .note-actions {
-        opacity: 1; /* Sempre visível no mobile */
-        gap: 6px;
-    }
-    
-    .action-button {
-        width: 36px;
-        height: 36px;
-    }
-    
-    .action-button svg {
-        width: 18px;
-        height: 18px;
-    }
-}
-
-/* ===== THUMBNAIL DAS NOTAS ===== */
-.note-thumbnail-container {
-    width: 100%;
-    height: 120px;
-    border-radius: 8px 8px 0 0;
-    overflow: hidden;
-    margin: -15px -15px 12px -15px;
-    background-color: var(--card-bg);
-    border-bottom: 1px solid #444;
-    position: relative;
-}
-
-.note-thumbnail {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-    display: block;
-}
-
-.note-card:hover .note-thumbnail {
-    transform: scale(1.05);
-}
-
-.note-card:has(.note-thumbnail-container) {
-    padding-top: 0;
-    overflow: hidden;
-}
-
-.note-card:has(.note-thumbnail-container) h3 {
-    margin-top: 8px;
-    margin-bottom: 8px;
-}
-
-.note-card:has(.note-thumbnail-container) > *:not(.note-thumbnail-container) {
-    padding: 0 15px;
-}
-
-.note-card:has(.note-thumbnail-container) .note-actions {
-    padding: 0 15px 15px 15px;
-}
-
-/* ===== GRID DE NOTAS - ESTILO GOOGLE KEEP ===== */
+/* ===== GRID DE NOTAS ===== */
 .notes-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -834,7 +774,6 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Conteúdo flexível */
 .note-content {
     flex: 1;
     display: flex;
@@ -849,97 +788,6 @@ body {
     -webkit-line-clamp: 6;
     -webkit-box-orient: vertical;
     line-clamp: 6;
-}
-
-/* ===== BOTÃO REMOVER IMAGEM NAS NOTAS ===== */
-.remove-image-button-small {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 2;
-}
-
-.note-thumbnail-container:hover .remove-image-button-small {
-    opacity: 1;
-}
-
-.remove-image-button-small:hover {
-    background: rgba(211, 47, 47, 0.8);
-    transform: scale(1.1);
-}
-
-/* Melhorar a área de toque no mobile */
-@media (max-width: 768px) {
-    .remove-image-button-small {
-        width: 32px;
-        height: 32px;
-        opacity: 0.8; /* Sempre visível no mobile */
-    }
-    
-    .note-thumbnail-container:hover .remove-image-button-small {
-        opacity: 0.8;
-    }
-}
-
-/* ===== ÍCONES DE AÇÃO NAS NOTAS ===== */
-.note-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 10px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.note-card:hover .note-actions {
-    opacity: 1;
-}
-
-.action-button {
-    padding: 6px;
-    border: none;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: var(--text-primary);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-}
-
-.action-button:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    transform: scale(1.1);
-}
-
-.edit-button:hover {
-    background-color: rgba(45, 90, 45, 0.3);
-    color: var(--accent-color);
-}
-
-.delete-button-small:hover {
-    background-color: rgba(211, 47, 47, 0.3);
-    color: #d32f2f;
-}
-
-/* Ícones SVG */
-.action-button svg {
-    width: 16px;
-    height: 16px;
 }
 
 /* ===== CATEGORIAS E FILTROS ===== */
@@ -1081,6 +929,45 @@ body {
     background-color: #444;
 }
 
+/* ===== MODAL DE IMAGEM ===== */
+.image-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    cursor: zoom-out;
+}
+
+.image-modal img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.image-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* ===== ANIMAÇÕES ===== */
 @keyframes fadeIn {
     from { opacity: 0; }
@@ -1105,6 +992,72 @@ body {
 
 /* ===== LAYOUT MOBILE ===== */
 @media (max-width: 768px) {
+    body {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .header {
+        margin-bottom: 15px;
+    }
+
+    .search-container {
+        flex-direction: row;
+        width: 100%;
+        gap: 8px;
+        flex-wrap: nowrap;
+        display: grid;
+        grid-template-columns: 1fr auto auto auto auto;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .search-container input {
+        flex: 1;
+        min-width: 120px;
+        font-size: 16px;
+        grid-column: 1 / 2;
+    }
+
+    .search-container button,
+    .filter-button,
+    .backup-button {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 10px;
+        flex-shrink: 0;
+    }
+
+    #searchButton {
+        grid-column: 2 / 3;
+    }
+
+    #categoriesFilterButton {
+        grid-column: 3 / 4;
+    }
+
+    .backup-buttons {
+        grid-column: 4 / 6;
+        display: flex;
+        gap: 8px;
+        margin-left: 0;
+        margin-top: 0;
+    }
+
+    .note-creator, .note-editor {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .notes-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .note-card {
+        padding: 12px;
+    }
+
     .formatting-container {
         flex-direction: column;
         gap: 12px;
@@ -1115,18 +1068,18 @@ body {
     .formatting-toolbar {
         justify-content: center;
         width: 100%;
-        gap: 6px; /* Menor gap no mobile */
-        order: 1; /* Toolbar primeiro */
+        gap: 6px;
+        order: 1;
     }
     
     .formatting-container .editor-buttons {
         justify-content: center;
         width: 100%;
         gap: 8px;
-        order: 2; /* Botões depois */
-        margin-left: 0; /* Remove margin-left no mobile */
-        padding-top: 8px; /* Espaço entre as linhas */
-        border-top: 1px solid rgba(255, 255, 255, 0.1); /* Linha separadora */
+        order: 2;
+        margin-left: 0;
+        padding-top: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
     
     .formatting-toolbar button,
@@ -1144,12 +1097,95 @@ body {
         padding: 12px 16px;
         font-size: 14px;
         min-height: 44px;
-        flex: 1; /* Botões ocupam espaço igual */
-        max-width: 120px; /* Limita largura máxima */
+        flex: 1;
+        max-width: 120px;
+    }
+
+    .content-sections-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    /* Melhorar área de toque */
+    button, .action-button, .category-chip {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .action-button {
+        width: 44px;
+        height: 44px;
+    }
+
+    .action-button svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .note-actions {
+        opacity: 1;
+        gap: 6px;
+    }
+
+    /* Prevenir zoom em inputs */
+    input, textarea, .editable-content {
+        font-size: 16px !important;
+    }
+
+    /* Ajustes específicos para PWA */
+    .pwa-mode {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    /* Melhorias de scroll no mobile */
+    .todo-section,
+    .note-links-section {
+        max-height: 200px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Thumbnail mobile */
+    .note-thumbnail-container {
+        height: 120px;
+        margin: -15px -15px 12px -15px;
+    }
+
+    .remove-image-button-small {
+        width: 32px;
+        height: 32px;
+        opacity: 0.8;
     }
     
+    .note-thumbnail-container:hover .remove-image-button-small {
+        opacity: 0.8;
+    }
+
     /* Layout específico para telas muito pequenas */
     @media (max-width: 480px) {
+        .search-container {
+            grid-template-columns: 1fr auto auto;
+            gap: 6px;
+        }
+
+        .search-container input {
+            grid-column: 1 / 2;
+        }
+
+        #searchButton {
+            grid-column: 2 / 3;
+        }
+
+        #categoriesFilterButton {
+            grid-column: 3 / 4;
+        }
+
+        .backup-buttons {
+            grid-column: 1 / -1;
+            margin-top: 8px;
+            justify-content: center;
+        }
+
         .formatting-toolbar {
             gap: 4px;
         }
@@ -1168,8 +1204,23 @@ body {
     }
 }
 
+/* Suporte para notch e áreas seguras */
+@supports(padding: max(0px)) {
+    body {
+        padding-left: max(10px, env(safe-area-inset-left));
+        padding-right: max(10px, env(safe-area-inset-right));
+        padding-top: max(10px, env(safe-area-inset-top));
+        padding-bottom: max(10px, env(safe-area-inset-bottom));
+    }
+}
+
 /* ===== RESPONSIVIDADE GERAL ===== */
 @media (max-width: 968px) {
+    .content-sections-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
     .formatting-container {
         flex-wrap: wrap;
     }

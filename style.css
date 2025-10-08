@@ -1,0 +1,1001 @@
+/* ===== VARIÁVEIS E ESTILOS GLOBAIS ===== */
+:root[data-theme="dark"] {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --text-primary: #ffffff;
+    --accent-color: #2d5a2d;
+    --accent-hover: #3a7a3a;
+    --card-bg: #2d2d2d;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    padding: 20px;
+}
+
+/* ===== HEADER E BUSCA ===== */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.search-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.search-container input, .search-container button, .filter-button, .backup-button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 30px;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.search-container button, .filter-button, .backup-button {
+    background-color: var(--accent-color);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.search-container button:hover, .filter-button:hover, .backup-button:hover {
+    background-color: var(--accent-hover);
+}
+
+.backup-buttons {
+    display: flex;
+    gap: 8px;
+    margin-left: 10px;
+}
+
+.backup-button {
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.backup-button::after {
+    content: attr(title);
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.backup-button:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ===== CRIADOR E EDITOR DE NOTAS ===== */
+.note-creator, .note-editor {
+    background-color: var(--bg-secondary);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.note-editor {
+    border: 2px solid var(--accent-color);
+    display: none;
+}
+
+.note-editor h2 {
+    color: var(--accent-color);
+    margin-bottom: 15px;
+}
+
+.title-input, .editable-content {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #444;
+    border-radius: 8px;
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    font-size: 16px;
+}
+
+.editable-content {
+    min-height: 150px;
+    resize: vertical;
+    overflow-y: auto;
+}
+
+.editable-content[placeholder]:empty:before {
+    content: attr(placeholder);
+    color: #888;
+    font-style: italic;
+}
+
+/* ===== BARRA DE FERRAMENTAS ===== */
+.formatting-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    padding: 15px;
+    background-color: rgba(45, 90, 45, 0.1);
+    border-radius: 8px;
+    border: 1px solid #444;
+    margin-top: 15px;
+    margin-bottom: 0;
+}
+
+.formatting-toolbar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    flex: 1;
+}
+
+.formatting-toolbar button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 20px;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.formatting-toolbar button:hover {
+    background-color: #555;
+}
+
+.formatting-toolbar input[type="color"] {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    background: none;
+}
+
+.formatting-toolbar input[type="file"] {
+    display: none;
+}
+
+.formatting-container .editor-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 0;
+}
+
+/* ===== BOTÕES ===== */
+.save-button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 30px;
+    background-color: var(--accent-color);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+}
+
+.save-button:hover {
+    background-color: var(--accent-hover);
+}
+
+.cancel-button {
+    padding: 12px 25px;
+    border: 1px solid #666;
+    border-radius: 30px;
+    background-color: transparent;
+    color: var(--text-primary);
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.cancel-button:hover {
+    background-color: #444;
+}
+
+.delete-button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 30px;
+    background-color: #d32f2f;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+    background-color: #b71c1c;
+}
+
+/* ===== SEÇÕES DE CONTEÚDO ===== */
+.content-sections-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.content-sections-container.single-section {
+    grid-template-columns: 1fr;
+}
+
+.bottom-sections-container {
+    margin-top: 0;
+    display: block;
+}
+
+.bottom-sections-container.single-section {
+    grid-column: 1 / -1;
+}
+
+/* ===== TODO LIST ===== */
+.todo-section {
+    padding: 12px;
+    background-color: rgba(45, 90, 45, 0.1);
+    border-radius: 8px;
+    border-left: 3px solid var(--accent-color);
+    height: fit-content;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.todo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    position: sticky;
+    top: 0;
+    background-color: var(--bg-secondary);
+    padding: 5px 0;
+    z-index: 1;
+}
+
+.todo-header h4 {
+    color: var(--accent-color);
+    margin: 0;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.add-todo-button {
+    padding: 6px 10px;
+    border: 1px solid var(--accent-color);
+    border-radius: 15px;
+    background-color: transparent;
+    color: var(--accent-color);
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.add-todo-button:hover {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.todo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.todo-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    background-color: var(--card-bg);
+    border-radius: 6px;
+    border: 1px solid #444;
+    transition: all 0.2s ease;
+}
+
+.todo-item:hover {
+    border-color: var(--accent-color);
+}
+
+.todo-checkbox {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--accent-color);
+    flex-shrink: 0;
+}
+
+.todo-text {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 13px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+    min-width: 0;
+}
+
+.todo-text:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.todo-text.completed {
+    text-decoration: line-through;
+    color: #888;
+    opacity: 0.7;
+}
+
+.todo-actions {
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    flex-shrink: 0;
+}
+
+.todo-item:hover .todo-actions {
+    opacity: 1;
+}
+
+.todo-delete {
+    background: none;
+    border: none;
+    color: #d32f2f;
+    cursor: pointer;
+    padding: 2px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+}
+
+.todo-delete:hover {
+    background-color: rgba(211, 47, 47, 0.1);
+}
+
+/* ===== SEÇÃO DE LINKS ===== */
+.note-links-section {
+    padding: 12px;
+    background-color: rgba(45, 90, 45, 0.1);
+    border-radius: 8px;
+    border-left: 3px solid var(--accent-color);
+    height: fit-content;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.links-title {
+    color: var(--accent-color);
+    font-size: 14px;
+    margin-bottom: 12px;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    background-color: var(--bg-secondary);
+    padding: 5px 0;
+    z-index: 1;
+}
+
+.links-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.link-item {
+    padding: 8px;
+    background-color: var(--card-bg);
+    border-radius: 6px;
+    border: 1px solid #444;
+    transition: transform 0.2s ease;
+}
+
+.link-item:hover {
+    transform: translateY(-1px);
+    border-color: var(--accent-color);
+}
+
+.link-content {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.thumbnail-container {
+    flex-shrink: 0;
+    width: 80px;
+    height: 60px;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: #2d2d2d;
+}
+
+.link-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+}
+
+.link-thumbnail.loading {
+    opacity: 0.7;
+    filter: blur(1px);
+}
+
+.link-thumbnail.loaded {
+    opacity: 1;
+}
+
+.link-thumbnail.error {
+    opacity: 0.5;
+}
+
+.link-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.note-link {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.note-link:hover {
+    color: var(--accent-color);
+}
+
+.link-url {
+    color: #888;
+    font-size: 11px;
+    word-break: break-all;
+    margin-bottom: 4px;
+}
+
+.link-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: auto;
+}
+
+.copy-link-button {
+    background: rgba(45, 90, 45, 0.3);
+    border: 1px solid var(--accent-color);
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-size: 11px;
+    width: 24px;
+    height: 24px;
+}
+
+.copy-link-button:hover {
+    background-color: var(--accent-color);
+}
+
+/* ===== THUMBNAIL DAS NOTAS ===== */
+.note-thumbnail-container {
+    width: 100%;
+    height: 120px;
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+    margin: -15px -15px 12px -15px;
+    background-color: var(--card-bg);
+    border-bottom: 1px solid #444;
+    position: relative;
+}
+
+.note-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    display: block;
+}
+
+.note-card:hover .note-thumbnail {
+    transform: scale(1.05);
+}
+
+.note-card:has(.note-thumbnail-container) {
+    padding-top: 0;
+    overflow: hidden;
+}
+
+.note-card:has(.note-thumbnail-container) h3 {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.note-card:has(.note-thumbnail-container) > *:not(.note-thumbnail-container) {
+    padding: 0 15px;
+}
+
+.note-card:has(.note-thumbnail-container) .note-actions {
+    padding: 0 15px 15px 15px;
+}
+
+/* ===== GRID DE NOTAS - ESTILO GOOGLE KEEP ===== */
+.notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-auto-rows: minmax(150px, auto);
+    gap: 20px;
+    align-items: start;
+}
+
+.note-card {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-left: 4px solid var(--accent-color);
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    break-inside: avoid;
+}
+
+.note-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Conteúdo flexível */
+.note-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.note-preview {
+    flex: 1;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    line-clamp: 6;
+}
+
+/* ===== ÍCONES DE AÇÃO NAS NOTAS ===== */
+.note-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.note-card:hover .note-actions {
+    opacity: 1;
+}
+
+.action-button {
+    padding: 6px;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.action-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.edit-button:hover {
+    background-color: rgba(45, 90, 45, 0.3);
+    color: var(--accent-color);
+}
+
+.delete-button-small:hover {
+    background-color: rgba(211, 47, 47, 0.3);
+    color: #d32f2f;
+}
+
+/* Ícones SVG */
+.action-button svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* ===== CATEGORIAS E FILTROS ===== */
+.categories-filter {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.category-chip {
+    padding: 5px 12px;
+    background-color: var(--accent-color);
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.category-chip:hover {
+    background-color: var(--accent-hover);
+    transform: scale(1.05);
+}
+
+/* ===== MODAL DE CATEGORIAS ===== */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background-color: var(--bg-secondary);
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    animation: slideIn 0.3s ease;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #444;
+}
+
+.modal-header h2 {
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+
+.close-button:hover {
+    background-color: #444;
+}
+
+.modal-body {
+    padding: 20px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.categories-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-category-item {
+    padding: 12px 15px;
+    background-color: var(--card-bg);
+    border: 1px solid #444;
+    border-radius: 8px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-category-item:hover, .modal-category-item.active {
+    background-color: var(--accent-color);
+    transform: translateX(5px);
+}
+
+.category-count {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.8em;
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid #444;
+    display: flex;
+    justify-content: center;
+}
+
+.clear-filter-button {
+    padding: 10px 20px;
+    border: 1px solid #666;
+    border-radius: 20px;
+    background-color: transparent;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.clear-filter-button:hover {
+    background-color: #444;
+}
+
+/* ===== ANIMAÇÕES ===== */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { 
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== MELHORIAS MOBILE ===== */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .header {
+    margin-bottom: 20px;
+  }
+
+  .search-container {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .search-container input {
+    width: 100%;
+    font-size: 16px; /* Previne zoom no iOS */
+  }
+
+  .note-creator, .note-editor {
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+
+  .notes-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .note-card {
+    padding: 12px;
+  }
+
+  .formatting-container {
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .formatting-toolbar {
+    justify-content: center;
+  }
+
+  .content-sections-container {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  /* Melhorar área de toque */
+  button, .action-button, .category-chip {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .action-button {
+    width: 44px;
+    height: 44px;
+  }
+
+  .action-button svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Prevenir zoom em inputs */
+  input, textarea, .editable-content {
+    font-size: 16px !important;
+  }
+
+  /* Ajustes específicos para PWA */
+  .pwa-mode {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Suporte para notch e áreas seguras */
+@supports(padding: max(0px)) {
+  body {
+    padding-left: max(10px, env(safe-area-inset-left));
+    padding-right: max(10px, env(safe-area-inset-right));
+    padding-top: max(10px, env(safe-area-inset-top));
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+  }
+}
+
+/* Melhorias de scroll no mobile */
+@media (max-width: 768px) {
+  .todo-section,
+  .note-links-section {
+    max-height: 200px;
+    -webkit-overflow-scrolling: touch; /* Scroll suave no iOS */
+  }
+}
+
+@keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 968px) {
+    .content-sections-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .formatting-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    
+    .formatting-toolbar {
+        justify-content: center;
+    }
+    
+    .formatting-container .editor-buttons {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .formatting-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .formatting-toolbar {
+        justify-content: center;
+    }
+    
+    .formatting-container .save-button,
+    .formatting-container .editor-buttons {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .search-container {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .backup-buttons {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+    
+    .modal-content {
+        margin: 10% auto;
+        width: 95%;
+    }
+    
+    .content-sections-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .link-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .thumbnail-container {
+        width: 100%;
+        height: 80px;
+    }
+    
+    .todo-actions {
+        opacity: 1;
+    }
+    
+    .note-thumbnail-container {
+        height: 100px;
+        margin: -15px -15px 10px -15px;
+    }
+}

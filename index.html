@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Meta tags PWA -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#2d5a2d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MeNota">
+
+<!-- Manifest -->
+<link rel="manifest" href="manifest.json">
+
+<!-- Ícones para iOS -->
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="icon-192.png">    
+
+<title>MeNota</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <h1>MeNota</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Buscar por título ou conteúdo...">
+            <button id="searchButton">Buscar</button>
+            <button id="categoriesFilterButton" class="filter-button" title="Filtrar por categorias">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+                </svg>
+            </button>
+            <div class="backup-buttons">
+                <button id="exportNotes" class="backup-button" title="Exportar todas as notas para CSV">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                    </svg>
+                </button>
+                <input type="file" id="importNotes" accept=".csv,.json" style="display: none;">
+                <label for="importNotes" class="backup-button" title="Importar notas de arquivo">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/>
+                    </svg>
+                </label>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Criador de Notas -->
+        <section class="note-creator">
+            <input type="text" id="noteTitle" placeholder="Título da nota" class="title-input">
+            <div id="noteText" contenteditable="true" class="editable-content" placeholder="Escreva sua nota aqui... Use # para categorias. Ex: #ProjetoNovo"></div>
+            
+            <!-- Barra de Ferramentas -->
+            <div class="formatting-container">
+                <div class="formatting-toolbar">
+                    <button data-command="bold" type="button" title="Negrito"><b>B</b></button>
+                    <button data-command="italic" type="button" title="Itálico"><i>I</i></button>
+                    <button data-command="underline" type="button" title="Sublinhado"><u>S</u></button>
+                    <input type="color" id="noteColor" value="#2d5a2d" title="Cor da nota">
+                    <input type="file" id="imageUpload" accept="image/*" title="Adicionar imagem">
+                    <input type="file" id="audioUpload" accept="audio/*" title="Adicionar áudio">
+                </div>
+                <button id="saveNote" class="save-button">Salvar Nota</button>
+            </div>
+            
+            <!-- Seções de Conteúdo -->
+            <div class="content-sections-container">
+                <!-- Todo List -->
+                <div class="todo-section">
+                    <div class="todo-header">
+                        <h4>Lista de Tarefas</h4>
+                        <button type="button" id="addTodoItem" class="add-todo-button">+ Adicionar Tarefa</button>
+                    </div>
+                    <div class="todo-list" id="todoList"></div>
+                </div>
+                
+                <!-- Links -->
+                <div class="bottom-sections-container" id="bottomSections"></div>
+            </div>
+        </section>
+
+        <!-- Editor de Notas -->
+        <section class="note-editor" id="noteEditor" style="display: none;">
+            <h2>Editar Nota</h2>
+            
+            <input type="text" id="editNoteTitle" placeholder="Título da nota" class="title-input">
+            <div id="editNoteText" contenteditable="true" class="editable-content" placeholder="Escreva sua nota aqui..."></div>
+            
+            <!-- Barra de Ferramentas -->
+            <div class="formatting-container">
+                <div class="formatting-toolbar">
+                    <button data-command="bold" type="button" title="Negrito"><b>B</b></button>
+                    <button data-command="italic" type="button" title="Itálico"><i>I</i></button>
+                    <button data-command="underline" type="button" title="Sublinhado"><u>S</u></button>
+                    <input type="color" id="editNoteColor" title="Cor da nota">
+                </div>
+                <div class="editor-buttons">
+                    <button id="updateNote" class="save-button">Atualizar Nota</button>
+                    <button id="cancelEdit" class="cancel-button">Cancelar</button>
+                    <button id="deleteNote" class="delete-button">Excluir Nota</button>
+                </div>
+            </div>
+            
+            <!-- Seções de Conteúdo -->
+            <div class="content-sections-container">
+                <!-- Todo List -->
+                <div class="todo-section">
+                    <div class="todo-header">
+                        <h4>Lista de Tarefas</h4>
+                        <button type="button" id="addTodoItemEdit" class="add-todo-button">+ Adicionar Tarefa</button>
+                    </div>
+                    <div class="todo-list" id="editTodoList"></div>
+                </div>
+                
+                <!-- Links -->
+                <div class="bottom-sections-container" id="editBottomSections"></div>
+            </div>
+        </section>
+
+        <!-- Filtros e Grid -->
+        <section class="categories-filter" id="categoriesFilter"></section>
+        <section class="notes-grid" id="notesGrid"></section>
+    </main>
+
+    <!-- Modal de Categorias -->
+    <div id="categoriesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Filtrar por Categoria</h2>
+                <button id="closeModal" class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="categories-list" id="categoriesList"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="clearFilter" class="clear-filter-button">Limpar Filtro</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

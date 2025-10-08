@@ -7,7 +7,7 @@
   "background_color": "#1a1a1a",
   "theme_color": "#2d5a2d",
   "orientation": "portrait",
-  "scope": "/menota/",
+  "scope": "https://lucasnwd.github.io/menota//menota/",
   "icons": [
     {
       "src": "icon-192.png",
